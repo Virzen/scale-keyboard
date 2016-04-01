@@ -1,0 +1,27 @@
+{
+    "rules": {
+		"strict": 0,
+        "indent": [
+            1,
+            "tab"
+        ],
+        "quotes": [
+            1,
+            "single"
+        ],
+        "semi": [
+            2,
+            "always"
+        ],
+		"linebreak-style": 2,
+		"no-undef": 1,
+		"no-unused-vars": 0,
+		"comma-dangle": 0,
+		"no-console": 0
+    },
+    "env": {
+        "es6": true,
+        "browser": true
+    },
+    "extends": "eslint:recommended"
+}

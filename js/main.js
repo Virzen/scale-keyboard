@@ -33,18 +33,18 @@
 		const play = function (time) {
 			osc = audioModule.getOscillator(freq);
 			osc.start(time || 0);
-		}
+		};
 
 		const stop = function (time) {
 			if (osc) {
 				osc.stop(time || 0);
 			}
-		}
+		};
 
 		return {
 			play: play,
 			stop: stop
 		};
 	};
-	
+
 }());

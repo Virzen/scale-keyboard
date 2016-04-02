@@ -1,0 +1,23 @@
+{
+  "name": "simon-music-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Virzen/simon-music-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Virzen/simon-music-game/issues"
+  },
+  "homepage": "https://github.com/Virzen/simon-music-game#readme",
+  "devDependencies": {
+    "eslint": "^2.6.0"
+  }
+}

@@ -54,6 +54,8 @@
 
 		const settings = {
 			scaleName: scales[0],
+			tonic: 'C',
+			level: 4,
 			oscillatorType: oscillators[0],
 			volume: 0.5
 		};
@@ -61,6 +63,21 @@
 		const setScale = function (scale) {
 			if (scales.indexOf(scale) !== -1) {
 				settings.scaleName = scale;
+				return settings;
+			}
+		};
+
+		// NOTE: tonic lacks proper validation
+		const setTonic = function (tonic) {
+			if (typeof tonic === 'string') {
+				settings.tonic = tonic;
+				return settings;
+			}
+		};
+
+		const setLevel = function (level) {
+			if (typeof level === 'number' && level >= 0 && level <= 10) {
+				settings.level = level;
 				return settings;
 			}
 		};
@@ -81,27 +98,31 @@
 
 		return {
 			get settings() {
-				return Object.create(settings);
+				return Object.assign({}, settings);
 			},
 			setScale: setScale,
 			setOscillatorType: setOscillatorType,
-			setVolume: setVolume
+			setVolume: setVolume,
+			setTonic: setTonic,
+			setLevel: setLevel
 		};
 	}());
 
-	const musicNotationModule = (function () {
+	const musicModule = (function () {
 		const scale = function (tonic, type) {
 			try {
 				return teoria.note(tonic)
 					.scale(type);
 			}
 			catch (err) {
+				console.error(err);
 				return null;
 			}
 		};
 
 		const notesFromScale = function (tonic, type, level) {
-			const genericScale = scale(tonic, type);
+			const genericScale = scale(tonic, type).simple();
+			console.log(genericScale);
 
 			if (genericScale) {
 				const sounds = genericScale.map(s => s + level);
@@ -119,6 +140,7 @@
 				return teoria.note(note).fq();
 			}
 			catch (err) {
+				console.error(err);
 				return null;
 			}
 		};
@@ -130,13 +152,19 @@
 		};
 	}());
 
-	const notes = teoria.note('c')
-		.scale('major')
-		.simple()
-		.map(s => s + '3');
-	notes.push(notes[0].replace('3', '4'));
-	const freqs = notes.map(note => teoria.note(note).fq());
-	const voices = freqs.map(freq => audioModule.voice({ frequency: freq }));
+	const notes = musicModule.notesFromScale(
+		settingsModule.settings.tonic,
+		settingsModule.settings.scaleName,
+		settingsModule.settings.level
+	);
+	const freqs = notes.map(note => musicModule.frequency(note));
+	const voices = freqs.map(freq => {
+		return audioModule.voice({
+			frequency: freq,
+			type: settingsModule.settings.oscillatorType,
+			volume: settingsModule.settings.volume
+		});
+	});
 
 	voices.forEach(voice => {
 		const button = document.createElement('button');

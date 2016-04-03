@@ -1,4 +1,4 @@
-(function (teoria) {
+(function (teoria, Vue) {
 	'use strict';
 
 	// TODO: Documentation
@@ -171,5 +171,5 @@
 		});
 	});
 
-}(teoria));
-/* global teoria */
+}(teoria, Vue));
+/* global teoria, Vue */

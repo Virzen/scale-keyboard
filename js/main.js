@@ -126,7 +126,6 @@
 
 		const notesFromScale = function (tonic, type, level) {
 			const genericScale = scale(tonic, type).simple();
-			console.log(genericScale);
 
 			if (genericScale) {
 				const sounds = genericScale.map(s => s + level);
@@ -157,19 +156,44 @@
 		};
 	}());
 
-	const notes = musicModule.notesFromScale(
-		settingsModule.settings.tonic,
-		settingsModule.settings.scaleName,
-		settingsModule.settings.level
-	);
-	const freqs = notes.map(note => musicModule.frequency(note));
-	const voices = freqs.map(freq => {
-		return audioModule.voice({
-			frequency: freq,
-			type: settingsModule.settings.oscillatorType,
-			volume: settingsModule.settings.volume
-		});
+	Vue.component('keyboard', {
+		computed: {
+			sounds: function () {
+				const notes = musicModule.notesFromScale(
+					settingsModule.settings.tonic,
+					settingsModule.settings.scaleName,
+					settingsModule.settings.level
+				);
+				const sounds = notes.map(note => {
+					const frequency = musicModule.frequency(note);
+					const voice = audioModule.voice({
+						frequency: frequency,
+						type: settingsModule.settings.oscillatorType,
+						volume: settingsModule.settings.volume
+					});
+
+					return Object.assign({ note: note }, voice);
+				});
+
+				return sounds;
+			}
+		}
 	});
 
+	Vue.component('music-button', {
+		template: '#music-button-template',
+
+		props: [ 'sound' ]
+	});
+
+	const view = new Vue({
+		el: '#app',
+
+		computed: {
+			settings: function () {
+				return settingsModule.settings;
+			}
+		}
+	});
 }(teoria, Vue));
 /* global teoria, Vue */

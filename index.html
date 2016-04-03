@@ -13,12 +13,26 @@
 	</header>
 
 	<div id="app">
-
+		<keyboard inline-template>
+			<music-button v-for="sound in sounds" :sound="sound"></music-button>
+		</keyboard>
 	</div>
 
 	<!-- <footer class="primary-footer">
 		Wiktor Czajkowski &copy; 2016. All rights reserved.
 	</footer> -->
+
+
+	<!-- Templates -->
+	<template id="music-button-template">
+		<button type="button"
+			@mousedown="sound.start"
+			@mouseup="sound.stop"
+		>
+			{{ sound.note | uppercase }}
+		</button>
+	</template>
+
 
 	<!-- CSS -->
 	<link rel="stylesheet" href="css/main.css">

@@ -1,50 +1,38 @@
 (function () {
 	'use strict';
 
-	//var context = new AudioContext();
-
-	//var osc = context.createOscillator();
-	//osc.frequency.value = 220;
-	//osc.connect(context.destination);
-
 	const audioModule = (function () {
 		const ctx = new AudioContext();
 
-		const getOscillator = function (frequency) {
+		const oscillator = function ({ frequency = 440, type = 'sine' }) {
 			const osc = ctx.createOscillator();
+			const gainNode = ctx.createGain();
 
 			osc.frequency.value = frequency;
+			osc.type = type;
+			osc.start();
+			gainNode.gain.value = 0;
 
-			osc.connect(ctx.destination);
+			osc.connect(gainNode);
+			gainNode.connect(ctx.destination);
 
-			return osc;
+			const start = function () {
+				gainNode.gain.value = 1;
+			};
+
+			const stop = function () {
+				gainNode.gain.value = 0;
+			};
+
+			return {
+				start: start,
+				stop: stop
+			};
 		};
 
 		return {
-			getOscillator: getOscillator
+			oscillator: oscillator
 		};
 	}());
-
-
-	const button = function (spec) {
-		const freq = spec.frequency || 440;
-		let osc = {};
-
-		const play = function (time) {
-			osc = audioModule.getOscillator(freq);
-			osc.start(time || 0);
-		};
-
-		const stop = function (time) {
-			if (osc) {
-				osc.stop(time || 0);
-			}
-		};
-
-		return {
-			play: play,
-			stop: stop
-		};
-	};
 
 }());

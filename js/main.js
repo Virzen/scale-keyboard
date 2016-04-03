@@ -2,6 +2,7 @@
 	'use strict';
 
 	// TODO: Documentation
+	// TODO: Remove console.logs
 
 	const audioModule = (function () {
 		const ctx = new AudioContext();
@@ -98,6 +99,7 @@
 			}
 		};
 
+		// settingsModule public interface
 		return {
 			get settings() {
 				return Object.assign({}, settings);
@@ -147,6 +149,7 @@
 			}
 		};
 
+		// musicModule public interface
 		return {
 			scale: scale,
 			notesFromScale: notesFromScale,

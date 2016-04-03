@@ -1,6 +1,8 @@
 (function (teoria) {
 	'use strict';
 
+	// TODO: Documentation
+
 	const audioModule = (function () {
 		const ctx = new AudioContext();
 

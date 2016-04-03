@@ -171,15 +171,5 @@
 		});
 	});
 
-	voices.forEach(voice => {
-		const button = document.createElement('button');
-		button.textContent = Math.round(voice.frequency * 100, 2) / 100;
-
-		button.addEventListener('mousedown', voice.start, false);
-		button.addEventListener('mouseup', voice.stop, false);
-
-		document.body.appendChild(button);
-	});
-
 }(teoria));
 /* global teoria */

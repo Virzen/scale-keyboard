@@ -58,7 +58,7 @@
 		const settings = {
 			scaleName: scales[0],
 			tonic: 'C',
-			level: 4,
+			octave: 4,
 			oscillatorType: oscillators[0],
 			volume: 0.5
 		};
@@ -78,9 +78,9 @@
 			}
 		};
 
-		const setLevel = function (level) {
-			if (typeof level === 'number' && level >= 0 && level <= 10) {
-				settings.level = level;
+		const setOctave = function (octave) {
+			if (typeof octave === 'number' && octave >= 0 && octave <= 10) {
+				settings.octave = octave;
 				return settings;
 			}
 		};
@@ -108,7 +108,7 @@
 			setOscillatorType: setOscillatorType,
 			setVolume: setVolume,
 			setTonic: setTonic,
-			setLevel: setLevel
+			setOctave: setOctave
 		};
 	}());
 
@@ -124,12 +124,12 @@
 			}
 		};
 
-		const notesFromScale = function (tonic, type, level) {
+		const notesFromScale = function (tonic, type, octave) {
 			const genericScale = scale(tonic, type).simple();
 
 			if (genericScale) {
-				const sounds = genericScale.map(s => s + level);
-				sounds.push(sounds[0].replace(level, level + 1));
+				const sounds = genericScale.map(s => s + octave);
+				sounds.push(sounds[0].replace(octave, octave + 1));
 
 				return sounds;
 			}
@@ -182,7 +182,7 @@
 				const notes = musicModule.notesFromScale(
 					settingsModule.settings.tonic,
 					settingsModule.settings.scaleName,
-					settingsModule.settings.level
+					settingsModule.settings.octave
 				);
 				const sounds = notes.map((note, index) => {
 					const frequency = musicModule.frequency(note);

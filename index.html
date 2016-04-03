@@ -13,6 +13,7 @@
 	</header>
 
 	<div id="app">
+		<settings></settings>
 		<keyboard inline-template>
 			<music-button v-for="sound in sounds" :sound="sound"></music-button>
 		</keyboard>
@@ -29,7 +30,7 @@
 			@mousedown="sound.start"
 			@mouseup="sound.stop"
 		>
-			{{ sound.note | uppercase }}
+			{{ sound.note | uppercase }} ({{ sound.key }})
 		</button>
 	</template>
 

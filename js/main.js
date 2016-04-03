@@ -156,26 +156,59 @@
 		};
 	}());
 
+
 	Vue.component('keyboard', {
+		ready: function () {
+			window.addEventListener('keydown', this.keyDown, false);
+			window.addEventListener('keyup', this.keyUp, false);
+		},
+
+		destroy: function () {
+			window.removeEventListener('keydown', this.keyDown, false);
+			window.removeEventListener('keyup', this.keyUp, false);
+		},
+
+		data: function () {
+			return {
+				keys: [ 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l' ]
+			};
+		},
+
 		computed: {
+			keyCodes: function () {
+				return this.keys.map(s => 'Key' + s.toUpperCase());
+			},
 			sounds: function () {
 				const notes = musicModule.notesFromScale(
 					settingsModule.settings.tonic,
 					settingsModule.settings.scaleName,
 					settingsModule.settings.level
 				);
-				const sounds = notes.map(note => {
+				const sounds = notes.map((note, index) => {
 					const frequency = musicModule.frequency(note);
 					const voice = audioModule.voice({
 						frequency: frequency,
 						type: settingsModule.settings.oscillatorType,
 						volume: settingsModule.settings.volume
 					});
+					const key = this.keyCodes[index];
 
-					return Object.assign({ note: note }, voice);
+					return Object.assign({
+						note: note,
+						key: key
+					}, voice);
 				});
 
 				return sounds;
+			}
+		},
+
+		methods: {
+			keyDown: function (event) {
+				this.$broadcast('keyDown', event);
+			},
+			keyUp: function (event) {
+				this.$broadcast('keyUp', event);
 			}
 		}
 	});
@@ -183,17 +216,24 @@
 	Vue.component('music-button', {
 		template: '#music-button-template',
 
-		props: [ 'sound' ]
+		props: [ 'sound' ],
+
+		events: {
+			keyDown: function (event) {
+				if (event.code === this.sound.key) {
+					this.sound.start();
+				}
+			},
+			keyUp: function (event) {
+				if (event.code === this.sound.key) {
+					this.sound.stop();
+				}
+			}
+		}
 	});
 
 	const view = new Vue({
 		el: '#app',
-
-		computed: {
-			settings: function () {
-				return settingsModule.settings;
-			}
-		}
 	});
 }(teoria, Vue));
 /* global teoria, Vue */

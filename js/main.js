@@ -53,21 +53,21 @@
 		const oscillators = [ 'sine', 'triangle', 'sawtooth', 'square' ];
 
 		const settings = {
-			scale: scales[0],
-			oscillator: oscillators[0],
+			scaleName: scales[0],
+			oscillatorType: oscillators[0],
 			volume: 0.5
 		};
 
 		const setScale = function (scale) {
 			if (scales.indexOf(scale) !== -1) {
-				settings.scale = scale;
+				settings.scaleName = scale;
 				return settings;
 			}
 		};
 
 		const setOscillatorType = function (type) {
 			if (oscillators.indexOf(type) !== -1) {
-				settings.oscillator = type;
+				settings.oscillatorType = type;
 				return settings;
 			}
 		};
@@ -90,7 +90,44 @@
 	}());
 
 	const musicNotationModule = (function () {
-		
+		const scale = function (tonic, type) {
+			try {
+				return teoria.note(tonic)
+					.scale(type);
+			}
+			catch (err) {
+				return null;
+			}
+		};
+
+		const notesFromScale = function (tonic, type, level) {
+			const genericScale = scale(tonic, type);
+
+			if (genericScale) {
+				const sounds = genericScale.map(s => s + level);
+				sounds.push(sounds[0].replace(level, level + 1));
+
+				return sounds;
+			}
+			else {
+				return null;
+			}
+		};
+
+		const frequency = function (note) {
+			try {
+				return teoria.note(note).fq();
+			}
+			catch (err) {
+				return null;
+			}
+		};
+
+		return {
+			scale: scale,
+			notesFromScale: notesFromScale,
+			frequency: frequency
+		};
 	}());
 
 	const notes = teoria.note('c')

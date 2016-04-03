@@ -10,7 +10,7 @@
             "single"
         ],
         "semi": [
-            2,
+            1,
             "always"
         ],
 		"linebreak-style": 2,

@@ -99,8 +99,8 @@
 
 	const settingsModule = (function () {
 		const oscillators = [ 'sine', 'triangle', 'sawtooth', 'square' ];
-		const scales = [ 'major', 'minor', 'mixolydian', 'aeolian', 'ionian', 'dorian' ];
-		const tonics = musicModule.scale('c', 'major');
+		const scales = [ 'major', 'minor', 'mixolydian', 'aeolian', 'ionian', 'dorian', 'lydian' ];
+		const tonics = [ 'C' ];
 
 		const settings = {
 			volume: 0.5,

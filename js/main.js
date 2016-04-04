@@ -14,26 +14,38 @@
 
 		// TODO: add attack and release
 		const voice = function ({ frequency = 440, type = 'sine', volume = 0.5 }) {
-			const osc = ctx.createOscillator();
 			const gainNode = ctx.createGain();
+			let isOn = false;
+			let oscillator = {};
 			let voice = {};
 
-			osc.frequency.value = frequency;
-			osc.type = type;
 			gainNode.gain.value = 0;
-
-			osc.connect(gainNode);
 			gainNode.connect(compressor);
 
-			osc.start();
+			const start = function (time = 0) {
+				if (!isOn) {
+					oscillator = ctx.createOscillator();
 
-			const start = function () {
-				gainNode.gain.value = volume;
+					oscillator.frequency.value = frequency;
+					oscillator.type = type;
+
+					oscillator.connect(gainNode);
+
+					oscillator.start(typeof time === 'number' ? time : 0);
+					gainNode.gain.value = volume;
+
+					isOn = true;
+				}
+
 				return voice;
 			};
 
-			const stop = function () {
-				gainNode.gain.value = 0;
+			const stop = function (time = 0) {
+				if (isOn) {
+					oscillator.stop(typeof time === 'number' ? time : 0);
+					isOn = false;
+				}
+
 				return voice;
 			};
 
@@ -139,6 +151,7 @@
 		// settingsModule public interface
 		return settings;
 	}());
+
 
 
 

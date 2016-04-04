@@ -12,6 +12,7 @@
 		const compressor = ctx.createDynamicsCompressor();
 		compressor.connect(ctx.destination);
 
+		// TODO: add attack and release
 		const voice = function ({ frequency = 440, type = 'sine', volume = 0.5 }) {
 			const osc = ctx.createOscillator();
 			const gainNode = ctx.createGain();

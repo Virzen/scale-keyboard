@@ -14,6 +14,10 @@
 
 	<div id="app">
 		<section>
+			<h2>Controls</h2>
+			<button type="button" @click="toggleSettings">Toggle settings</button>
+		</section>
+		<section v-show="settingsOn">
 			<h2>Settings</h2>
 			<settings-panel :settings="settings"></settings-panel>
 		</section>
@@ -49,11 +53,11 @@
 		<label>
 			Volume
 			<input type="range"
-			v-model="settings.volume"
-			:value="settings.volume"
-			:min="settings.valid.volumes.min"
-			:max="settings.valid.volumes.max"
-			:step="settings.valid.volumes.step"
+				v-model="settings.volume"
+				:value="settings.volume"
+				:min="settings.valid.volumes.min"
+				:max="settings.valid.volumes.max"
+				:step="settings.valid.volumes.step"
 			>
 			{{ settings.volume }}
 		</label>
@@ -63,7 +67,7 @@
 			Oscillator type
 			<select v-model="settings.oscillatorType">
 				<option v-for="oscillatorType in settings.valid.oscillators"
-				:value="oscillatorType"
+					:value="oscillatorType"
 				>
 					{{ oscillatorType }}
 				</option>
@@ -82,7 +86,7 @@
 			</select>
 		</label>
 		<label>
-			Scale name
+			Scale
 			<select v-model="settings.scaleName">
 				<option v-for="scaleName in settings.valid.scales"
 					:value="scaleName"

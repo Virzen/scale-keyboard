@@ -231,7 +231,15 @@
 		el: '#app',
 
 		data: {
-			settings: settingsModule
+			settings: settingsModule,
+			settingsOn: false
+		},
+
+		methods: {
+			toggleSettings: function () {
+				this.settingsOn = !this.settingsOn;
+				return this;
+			}
 		}
 	});
 }(teoria, Vue));

@@ -4,6 +4,7 @@
 	// TODO: Documentation
 	// TODO: Remove console.logs
 
+	// TODO: add attack and release
 	const audioModule = (function () {
 		const ctx = new AudioContext();
 
@@ -12,7 +13,6 @@
 		const compressor = ctx.createDynamicsCompressor();
 		compressor.connect(ctx.destination);
 
-		// TODO: add attack and release
 		const voice = function ({ frequency = 440, type = 'sine', volume = 0.5 }) {
 			const gainNode = ctx.createGain();
 			let isOn = false;

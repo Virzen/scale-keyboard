@@ -60,7 +60,10 @@
 
 		// audioModule public interface
 		return {
-			voice: voice
+			voice: voice,
+			get ctxTime() {
+				return ctx.currentTime;
+			}
 		};
 	}());
 

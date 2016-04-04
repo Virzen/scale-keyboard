@@ -51,72 +51,12 @@
 		};
 	}());
 
-	const settingsModule = (function () {
-		const scales = [ 'major', 'minor' ];
-		const oscillators = [ 'sine', 'triangle', 'sawtooth', 'square' ];
-
-		const settings = {
-			scaleName: scales[0],
-			tonic: 'C',
-			octave: 4,
-			oscillatorType: oscillators[0],
-			volume: 0.5
-		};
-
-		const setScale = function (scale) {
-			if (scales.indexOf(scale) !== -1) {
-				settings.scaleName = scale;
-				return settings;
-			}
-		};
-
-		// NOTE: tonic lacks proper validation
-		const setTonic = function (tonic) {
-			if (typeof tonic === 'string') {
-				settings.tonic = tonic;
-				return settings;
-			}
-		};
-
-		const setOctave = function (octave) {
-			if (typeof octave === 'number' && octave >= 0 && octave <= 10) {
-				settings.octave = octave;
-				return settings;
-			}
-		};
-
-		const setOscillatorType = function (type) {
-			if (oscillators.indexOf(type) !== -1) {
-				settings.oscillatorType = type;
-				return settings;
-			}
-		};
-
-		const setVolume = function (volume) {
-			if (volume >= -1 && volume <= 1) {
-				settings.volume = volume;
-				return settings;
-			}
-		};
-
-		// settingsModule public interface
-		return {
-			get settings() {
-				return Object.assign({}, settings);
-			},
-			setScale: setScale,
-			setOscillatorType: setOscillatorType,
-			setVolume: setVolume,
-			setTonic: setTonic,
-			setOctave: setOctave
-		};
-	}());
-
 	const musicModule = (function () {
 		const scale = function (tonic, type) {
 			try {
 				return teoria.note(tonic)
-					.scale(type);
+					.scale(type)
+					.simple();
 			}
 			catch (err) {
 				console.error(err);
@@ -125,7 +65,8 @@
 		};
 
 		const notesFromScale = function (tonic, type, octave) {
-			const genericScale = scale(tonic, type).simple();
+			const genericScale = scale(tonic, type);
+			octave = Number.parseInt(octave);
 
 			if (genericScale) {
 				const sounds = genericScale.map(s => s + octave);
@@ -156,6 +97,55 @@
 		};
 	}());
 
+	const settingsModule = (function () {
+		const oscillators = [ 'sine', 'triangle', 'sawtooth', 'square' ];
+		const scales = [ 'major', 'minor', 'mixolydian', 'aeolian', 'ionian', 'dorian' ];
+		const tonics = musicModule.scale('c', 'major');
+
+		const settings = {
+			volume: 0.5,
+			oscillatorType: oscillators[0],
+			tonic: tonics[0],
+			scaleName: scales[0],
+			octave: 4,
+			valid: {
+				get volumes() {
+					return {
+						min: 0,
+						max: 1,
+						step: 0.01
+					};
+				},
+				get oscillators() {
+					return [...oscillators];
+				},
+				get tonics() {
+					return [...tonics];
+				},
+				get scales() {
+					return [...scales];
+				},
+				get octaves() {
+					return {
+						min: 0,
+						max: 9,
+						step: 1
+					};
+				}
+			}
+		};
+
+		// settingsModule public interface
+		return settings;
+	}());
+
+
+
+	Vue.component('settings-panel', {
+		template: '#settings-panel-template',
+
+		props: [ 'settings' ]
+	});
 
 	Vue.component('keyboard', {
 		ready: function () {
@@ -167,6 +157,8 @@
 			window.removeEventListener('keydown', this.keyDown, false);
 			window.removeEventListener('keyup', this.keyUp, false);
 		},
+
+		props: [ 'settings' ],
 
 		data: function () {
 			return {
@@ -180,16 +172,16 @@
 			},
 			sounds: function () {
 				const notes = musicModule.notesFromScale(
-					settingsModule.settings.tonic,
-					settingsModule.settings.scaleName,
-					settingsModule.settings.octave
+					this.settings.tonic,
+					this.settings.scaleName,
+					this.settings.octave
 				);
 				const sounds = notes.map((note, index) => {
 					const frequency = musicModule.frequency(note);
 					const voice = audioModule.voice({
 						frequency: frequency,
-						type: settingsModule.settings.oscillatorType,
-						volume: settingsModule.settings.volume
+						type: this.settings.oscillatorType,
+						volume: this.settings.volume
 					});
 					const keyCode = this.keyCodes[index];
 					const key = this.keys[index];
@@ -236,6 +228,10 @@
 
 	const view = new Vue({
 		el: '#app',
+
+		data: {
+			settings: settingsModule
+		}
 	});
 }(teoria, Vue));
 /* global teoria, Vue */

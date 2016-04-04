@@ -13,10 +13,16 @@
 	</header>
 
 	<div id="app">
-		<settings></settings>
-		<keyboard inline-template>
-			<music-button v-for="sound in sounds" :sound="sound"></music-button>
-		</keyboard>
+		<section>
+			<h2>Settings</h2>
+			<settings-panel :settings="settings"></settings-panel>
+		</section>
+		<section>
+			<h2>Keys</h2>
+			<keyboard :settings="settings" inline-template>
+				<music-button v-for="sound in sounds" :sound="sound"></music-button>
+			</keyboard>
+		</section>
 	</div>
 
 	<footer class="primary-footer">
@@ -36,6 +42,65 @@
 		>
 			{{ sound.key }}
 		</button>
+	</template>
+
+	<template id="settings-panel-template">
+		<h3>General</h3>
+		<label>
+			Volume
+			<input type="range"
+			v-model="settings.volume"
+			:value="settings.volume"
+			:min="settings.valid.volumes.min"
+			:max="settings.valid.volumes.max"
+			:step="settings.valid.volumes.step"
+			>
+			{{ settings.volume }}
+		</label>
+
+		<h3>Technical</h3>
+		<label>
+			Oscillator type
+			<select v-model="settings.oscillatorType">
+				<option v-for="oscillatorType in settings.valid.oscillators"
+				:value="oscillatorType"
+				>
+					{{ oscillatorType }}
+				</option>
+			</select>
+		</label>
+
+		<h3>Musical</h3>
+		<label>
+			Tonic
+			<select v-model="settings.tonic">
+				<option v-for="tonic in settings.valid.tonics"
+					:value="tonic"
+				>
+					{{ tonic | uppercase }}
+				</option>
+			</select>
+		</label>
+		<label>
+			Scale name
+			<select v-model="settings.scaleName">
+				<option v-for="scaleName in settings.valid.scales"
+					:value="scaleName"
+				>
+					{{ scaleName }}
+				</option>
+			</select>
+		</label>
+		<label>
+			Octave
+			<input type="number"
+				v-model="settings.octave"
+				:value="settings.octave"
+				:min="settings.valid.octaves.min"
+				:max="settings.valid.octaves.max"
+				:step="settings.valid.octaves.step"
+			>
+		</label>
 	</template>
 
 

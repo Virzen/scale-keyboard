@@ -191,10 +191,12 @@
 						type: settingsModule.settings.oscillatorType,
 						volume: settingsModule.settings.volume
 					});
-					const key = this.keyCodes[index];
+					const keyCode = this.keyCodes[index];
+					const key = this.keys[index];
 
 					return Object.assign({
 						note: note,
+						keyCode: keyCode,
 						key: key
 					}, voice);
 				});
@@ -220,12 +222,12 @@
 
 		events: {
 			keyDown: function (event) {
-				if (event.code === this.sound.key) {
+				if (event.code === this.sound.keyCode) {
 					this.sound.start();
 				}
 			},
 			keyUp: function (event) {
-				if (event.code === this.sound.key) {
+				if (event.code === this.sound.keyCode) {
 					this.sound.stop();
 				}
 			}

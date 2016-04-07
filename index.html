@@ -14,6 +14,11 @@
 
 	<div id="app">
 		<section>
+			<h2>Controls</h2>
+			<button type="button" @click="startGame">Start game</button>
+			<button type="button" @click="restartGame">Restart game</button>
+			Current number of steps: {{ currentSteps }}
+			<br>
 			<button type="button" @click="toggleSettings">Settings</button>
 		</section>
 		<section v-show="settingsOn">

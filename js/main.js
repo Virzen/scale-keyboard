@@ -155,8 +155,27 @@
 		return settings;
 	}());
 
+	const sequenceModule = (function () {
+		const randomSequence = function (values, steps = 1, base = []) {
+			if (typeof steps != 'number' || steps < 0) {
+				throw new Error('generateSequence: incorrect number of steps. Was: ' + steps);
+			}
 
+			const arr = new Array(steps - base.length).fill('');
+			const valsLen = values.length;
 
+			return base.concat(arr.map(() => values[Math.floor(Math.random() * valsLen)]));
+		};
+
+		const incrementSequence = function (sequence) {
+
+		};
+
+		// sequenceModule public interface
+		return {
+			randomSequence: randomSequence
+		};
+	}());
 
 	Vue.component('settings-panel', {
 		template: '#settings-panel-template',
@@ -193,6 +212,9 @@
 					this.settings.scaleName,
 					this.settings.octave
 				);
+
+				// Combine note name, key code, key and voice object
+				// into single object
 				const sounds = notes.map((note, index) => {
 					const frequency = musicModule.frequency(note);
 					const voice = audioModule.voice({
@@ -209,6 +231,8 @@
 						key: key
 					}, voice);
 				});
+
+				this.$dispatch('soundsGenerated', sounds);
 
 				return sounds;
 			}
@@ -230,14 +254,28 @@
 		props: [ 'sound' ],
 
 		events: {
-			keyDown: function (event) {
+			keyDown: function (event, time = 0) {
 				if (event.code === this.sound.keyCode) {
-					this.sound.start();
+					this.sound.start(time);
 				}
 			},
-			keyUp: function (event) {
+			keyUp: function (event, time = 0) {
 				if (event.code === this.sound.keyCode) {
-					this.sound.stop();
+					this.sound.stop(time);
+				}
+			},
+			playNote: function (note, duration = 0.5, startTime = 0, interval = 0) {
+				console.log('receive playNote');
+				if (typeof note !== 'string' || typeof duration !== 'number' || typeof startTime !== 'number') {
+					throw new Error(`music-button:playNote: incorrect args given. Were: ${note}, ${duration}, ${startTime}`);
+				}
+
+				if (this.sound.note[0].toLowerCase() === note.toLowerCase()) {
+					console.log('playNote', this.sound.note);
+					const ctxTime = audioModule.ctxTime;
+					const ctxStartTime = ctxTime + startTime;
+					this.sound.start(ctxStartTime);
+					this.sound.stop(ctxStartTime + duration);
 				}
 			}
 		}
@@ -248,13 +286,43 @@
 
 		data: {
 			settings: settingsModule,
-			settingsOn: false
+			settingsOn: false,
+			sounds: [],
+			sequence: []
+		},
+
+		computed: {
+			currentSteps: function () {
+				return this.sequence.length;
+			}
 		},
 
 		methods: {
 			toggleSettings: function () {
 				this.settingsOn = !this.settingsOn;
 				return this;
+			},
+			startGame: function () {
+				const notes = this.sounds.map(x => x.note[0].toUpperCase());
+
+				this.sequence = sequenceModule.randomSequence(notes, 1, [ 'C' ]);
+
+				this.playSequence(this.sequence);
+			},
+			restartGame: function () {
+
+			},
+			playSequence: function (sequence, duration = 0.65, interval = 0.25) {
+				console.log('playSequence');
+				sequence.forEach((note, index) => {
+					this.$broadcast('playNote', note, duration, (duration + interval) * index, interval);
+				});
+			}
+		},
+
+		events: {
+			soundsGenerated: function (sounds) {
+				this.sounds = sounds;
 			}
 		}
 	});

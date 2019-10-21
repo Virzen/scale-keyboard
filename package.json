@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/Virzen/simon-music-game#readme",
   "devDependencies": {
-    "eslint": "^2.6.0"
+    "eslint": "^6.5.1"
   }
 }
